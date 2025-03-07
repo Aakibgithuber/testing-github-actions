@@ -23,7 +23,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'dev' }}
+    environment: ${{ 'production' || 'dev' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
