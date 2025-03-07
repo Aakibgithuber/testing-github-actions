@@ -55,17 +55,5 @@ jobs:
             
             echo "Navigating to Pipeline Repository"
             cd /home/ai-pipeline/Navirego-AI-Pipeline/
-            
-            echo "Stopping Existing Pipeline"
-            ./stop.sh
-            
-            echo "Fetching Latest Changes"
-            git checkout main
-            git pull
-            
-            echo "Switching to Branch: ${{ github.event.inputs.branch || github.ref_name }}"
-            git checkout ${{ github.event.inputs.branch || github.ref_name }} || git checkout -b ${{ github.event.inputs.branch || github.ref_name }}
-            
-            echo "Starting Pipeline for ${{ github.event.inputs.environment || 'dev' }}"
-            ./start_debian.sh ${{ github.event.inputs.environment || 'dev' }}
+
           EOF
