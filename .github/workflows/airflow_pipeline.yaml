@@ -23,30 +23,18 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Debug Secrets and Variables
-        run: |
-          echo "Running on Environment: ${{ github.event.inputs.environment || 'dev' }}"
-          echo "Checking Secret Access..."
-          echo "SSH Key Length: " $(echo "${{ secrets.SSH_PRIVATE_KEY }}" | wc -c)
-          echo "Server Hosts:"
-          echo "DEV: ${{ secrets.SERVER_HOST_DEV }}"
-          echo "PROD: ${{ secrets.SERVER_HOST_PROD }}"
 
       - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          echo "Adding Known Hosts..."
-          ssh-keyscan -v -H ${{ secrets.SERVER_HOST_DEV }} >> ~/.ssh/known_hosts 2>&1 || echo "Keyscan failed for DEV"
-          ssh-keyscan -v -H ${{ secrets.SERVER_HOST_PROD }} >> ~/.ssh/known_hosts 2>&1 || echo "Keyscan failed for PROD"
-          cat ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.SERVER_HOST_DEV }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.SERVER_HOST_PROD }} >> ~/.ssh/known_hosts
 
       - name: Deploy to Server
         run: |
@@ -60,13 +48,25 @@ jobs:
             GCP_ZONE=""
           fi
 
-          echo "Connecting to server: $SERVER_HOST with user: $SERVER_USER"
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $SERVER_USER@$SERVER_HOST << EOF
+          echo "Connecting to server: $SERVER_HOST"
+          ssh -i ~/.ssh/id_rsa $SERVER_USER@$SERVER_HOST << EOF
             set -e
             echo "Switching to root user"
             sudo -i
             
             echo "Navigating to Pipeline Repository"
             cd /home/ai-pipeline/Navirego-AI-Pipeline/
-        
+            
+            echo "Stopping Existing Pipeline"
+            ./stop.sh
+            
+            echo "Fetching Latest Changes"
+            git checkout main
+            git pull
+            
+            echo "Switching to Branch: ${{ github.event.inputs.branch || github.ref_name }}"
+            git checkout ${{ github.event.inputs.branch || github.ref_name }} || git checkout -b ${{ github.event.inputs.branch || github.ref_name }}
+            
+            echo "Starting Pipeline for ${{ github.event.inputs.environment || 'dev' }}"
+            ./start_debian.sh ${{ github.event.inputs.environment || 'dev' }}
           EOF
