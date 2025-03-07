@@ -34,7 +34,6 @@ jobs:
             SERVER_HOST=${{ secrets.SERVER_HOST_PROD }}
           else
             SERVER_HOST=${{ secrets.SERVER_HOST_DEV }}
-            GCP_ZONE=""
           fi
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
