@@ -57,7 +57,7 @@ jobs:
             sudo -i
             
             echo "Navigating to Pipeline Repository"
-            cd /home/ai-pipeline/Navirego-AI-Pipeline/ ,
+            cd /home/ai-pipeline/Navirego-AI-Pipeline/
             pwd
 
           EOF
