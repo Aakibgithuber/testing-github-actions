@@ -17,7 +17,7 @@ on:
         type: choice
         options:
           - dev
-          - prod
+          - production
 
 jobs:
   deploy:
@@ -29,7 +29,7 @@ jobs:
 
       - name: Setup SSH Key
         run: |
-          if [ "${{ github.event.inputs.environment }}" == "prod" ]; then
+          if [ "${{ github.event.inputs.environment }}" == "production" ]; then
             SERVER_HOST=${{ secrets.SERVER_HOST_PROD }}
           else
             SERVER_HOST=${{ secrets.SERVER_HOST_DEV }}
@@ -40,7 +40,7 @@ jobs:
           ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
       - name: Deploy to Server
         run: |
-          if [ "${{ github.event.inputs.environment }}" == "prod" ]; then
+          if [ "${{ github.event.inputs.environment }}" == "production" ]; then
             SERVER_USER=${{ secrets.SERVER_USER_PROD }}
             SERVER_HOST=${{ secrets.SERVER_HOST_PROD }}
             GCP_ZONE=${{ secrets.GCP_ZONE_PROD }}
