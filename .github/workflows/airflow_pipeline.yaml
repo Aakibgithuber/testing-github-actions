@@ -1,12 +1,15 @@
-name: Deploy to Vercel
+name: Airflow Pipeline Deployment
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Select Branch to Deploy'
+        description: 'Branch to Deploy'
         required: true
-        default: 'master'
+        default: 'main'
       environment:
         description: 'Deployment Environment'
         required: true
@@ -15,50 +18,46 @@ on:
         options:
           - dev
           - production
-      sub_vertical_access:
-        description: 'Enter Sub Vertical Access'
-        required: true
-      regulatory_url:
-        description: 'Enter Regulatory URL'
-        required: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    environment: ${{github.event.inputs.environment || 'dev' }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.branch }}
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install Vercel CLI
-        run: npm install -g vercel
-
-      - name: Deploy to Vercel
-        run: vercel --token ${{ secrets.VERCEL_TOKEN }} --env Production
-
-      - name: Send notification to selected environment
-        if: success()
+      - name: Setup SSH Key
         run: |
-          if [[ "${{ inputs.environment }}" == "production" ]]; then
-            BASE_URL=${{ env.BASE_URL_PROD }}
-            echo "Sending notification to PROD"
+          if [ "${{ github.event.inputs.environment }}" == "production" ]; then
+            SERVER_HOST=${{ secrets.SERVER_HOST_PROD }}
           else
-            BASE_URL=${{ env.BASE_URL_DEV }}
-            echo "Sending notification to DEV"
+            SERVER_HOST=${{ secrets.SERVER_HOST_DEV }}
+          fi
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
+      - name: Deploy to Server
+        run: |
+          if [ "${{ github.event.inputs.environment }}" == "production" ]; then
+            SERVER_USER=${{ secrets.SERVER_USER_PROD }}
+            SERVER_HOST=${{ secrets.SERVER_HOST_PROD }}
+            GCP_ZONE=${{ secrets.GCP_ZONE_PROD }}
+          else
+            SERVER_USER=${{ secrets.SERVER_USER_DEV }}
+            SERVER_HOST=${{ secrets.SERVER_HOST_DEV }}
+            GCP_ZONE=""
           fi
 
-          curl -X 'PUT' "$BASE_URL/notification/regulatory/updated" \
-          -H 'accept: */*' \
-          -H "regulatorysecretskey: ${{ secrets.REGULATORY_SECRET_KEY }}" \
-          -H 'Content-Type: application/json' \
-          -d '{
-            "sub_vertical_access": "${{ inputs.sub_vertical_access }}",
-            "regulatory_url": "${{ inputs.regulatory_url }}"
-          }'
+          echo "Connecting to server: $SERVER_HOST"
+          ssh -i ~/.ssh/id_rsa $SERVER_USER@$SERVER_HOST << EOF
+            set -e
+            echo "Switching to root user"
+            sudo -i
+            
+            echo "Navigating to Pipeline Repository"
+            cd /home/ai-pipeline/Navirego-AI-Pipeline/
+            
+
+          EOF
