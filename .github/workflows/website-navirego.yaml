@@ -1,0 +1,47 @@
+name: Send Notification
+
+on:
+  workflow_dispatch:
+    inputs:
+      sub_vertical_access:
+        description: 'Enter Sub Vertical Access'
+        required: true
+      regulatory_url:
+        description: 'Enter Regulatory URL'
+        required: true
+      meta_data:
+        description: 'Enter Meta-data'
+        required: true
+      environment:
+        description: 'Deployment Environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - production
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send notification to selected environment
+        run: |
+          if [[ "${{ inputs.environment }}" == "production" ]]; then
+            BASE_URL=${{ env.BASE_URL_PROD }}
+            echo "Sending notification to PROD"
+          else
+            BASE_URL=${{ env.BASE_URL_DEV }}
+            echo "Sending notification to DEV"
+          fi
+
+          curl -X 'PUT' "$BASE_URL/notification/regulatory/updated" \
+          -H 'accept: */*' \
+          -H "regulatorysecretskey: ${{ secrets.REGULATORY_SECRET_KEY }}" \
+          -H 'Content-Type: application/json' \
+          -d '{
+            "sub_vertical_access": "${{ inputs.sub_vertical_access }}",
+            "regulatory_url": "${{ inputs.regulatory_url }}"
+            "meta_data":"${{ inputs.meta_data }}"
+          }'
