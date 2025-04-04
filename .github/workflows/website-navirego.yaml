@@ -37,20 +37,6 @@ jobs:
             echo "Sending notification to DEV"
           fi
 
-      - name: Debug BASE_URL
-        run: |
-          echo "Checking BASE_URL..."
-          if [[ -z "$BASE_URL" ]]; then
-            echo "Error: BASE_URL is empty!"
-            exit 1
-          else
-            echo "BASE_URL is set to: $BASE_URL"
-          fi
-        env:
-          BASE_URL: ${{ env.BASE_URL }}
-
-      - name: Send Notification Request
-        run: |
           curl -X 'PUT' "$BASE_URL/notification/regulatory/updated" \
           -H 'accept: */*' \
           -H "regulatorysecretskey: ${{ secrets.REGULATORY_SECRET_KEY }}" \
@@ -58,5 +44,7 @@ jobs:
           -d '{
             "sub_vertical_access": "${{ inputs.sub_vertical_access }}",
             "regulatory_url": "${{ inputs.regulatory_url }}",
-            "meta_data": "${{ inputs.meta_data }}"
+            "meta_data":"${{ inputs.meta_data }}"
           }'
+        env:
+          BASE_URL: ${{ env.BASE_URL }}
