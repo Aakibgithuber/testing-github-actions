@@ -24,6 +24,7 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
 
     steps:
       - name: Send notification to selected environment
@@ -35,6 +36,7 @@ jobs:
             BASE_URL=${{ env.BASE_URL_DEV }}
             echo "Sending notification to DEV"
           fi
+          echo "Using BASE_URL: $BASE_URL"  # Debugging ke liye print kar raha hu
 
           curl -X 'PUT' "$BASE_URL/notification/regulatory/updated" \
           -H 'accept: */*' \
