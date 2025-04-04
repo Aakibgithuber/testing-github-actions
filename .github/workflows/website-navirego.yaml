@@ -38,7 +38,12 @@ jobs:
           fi
       - name: Debug BASE_URL
         run: |
-            echo "Encoded BASE_URL:"
-            echo -n "$BASE_URL" | base64
+            if [[ -z "$BASE_URL" ]]; then
+              echo "Error: BASE_URL is empty!"
+              exit 1
+            else
+              echo "BASE_URL is set."
+            fi
+          
         
           
