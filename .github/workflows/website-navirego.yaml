@@ -24,18 +24,17 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
-      - name: Set BASE_URL based on environment
+      - name: Send notification to selected environment
         run: |
-          if [[ "${{ inputs.environment }}" == "production" ]]; then
-            echo "BASE_URL=${{ secrets.BASE_URL_PROD }}" >> $GITHUB_ENV
+          if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
+            BASE_URL=${{ secrets.BASE_URL_PROD }}
             echo "Sending notification to PROD"
           else
-            echo "BASE_URL=${{ secrets.BASE_URL_DEV }}" >> $GITHUB_ENV
+            BASE_URL=${{ secrets.BASE_URL_DEV }}
             echo "Sending notification to DEV"
           fi
 
-      - name: Debug BASE_URL
-        run: echo "Using BASE_URL:$BASE_URL"
+          echo "Using BASE_URL: $BASE_URL"  # Debugging ke liye print kar raha hu
