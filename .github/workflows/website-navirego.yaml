@@ -60,5 +60,3 @@ jobs:
             "regulatory_url": "${{ inputs.regulatory_url }}",
             "meta_data": "${{ inputs.meta_data }}"
           }'
-        env:
-          BASE_URL: ${{ env.BASE_URL }}
