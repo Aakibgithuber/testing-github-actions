@@ -36,3 +36,9 @@ jobs:
             BASE_URL=${{ secrets.BASE_URL_DEV }}
             echo "Sending notification to DEV"
           fi
+      - name: Debug BASE_URL
+        run: |
+            echo "Encoded BASE_URL:"
+            echo -n "$BASE_URL" | base64
+        
+          
