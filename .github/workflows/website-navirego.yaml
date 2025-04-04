@@ -30,16 +30,12 @@ jobs:
       - name: Set BASE_URL for environment
         run: |
           if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
-            echo "BASE_URL=${{ secrets.BASE_URL_PROD }}" >> $GITHUB_ENV
+            "BASE_URL=${{ secrets.BASE_URL_PROD }}" >> $GITHUB_ENV
             echo "Sending notification to PROD"
           else
-            echo "BASE_URL=${{ secrets.BASE_URL_DEV }}" >> $GITHUB_ENV
+            "BASE_URL=${{ secrets.BASE_URL_DEV }}" >> $GITHUB_ENV
             echo "Sending notification to DEV"
           fi
-
-          env:
-            BASE_URL: ${{ env.BASE_URL }}
-
           curl -X 'PUT' "$BASE_URL/notification/regulatory/updated" \
           -H 'accept: */*' \
           -H "regulatorysecretskey: ${{ secrets.REGULATORY_SECRET_KEY }}" \
