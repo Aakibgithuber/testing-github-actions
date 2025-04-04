@@ -30,20 +30,19 @@ jobs:
       - name: Send notification to selected environment
         run: |
           if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
-            BASE_URL=${{ secrets.BASE_URL_PROD }}
+            echo "BASE_URL=${{ secrets.BASE_URL_PROD }}" >> $GITHUB_ENV
             echo "Sending notification to PROD"
           else
-            BASE_URL=${{ secrets.BASE_URL_DEV }}
+            echo "BASE_URL=${{ secrets.BASE_URL_DEV }}" >> $GITHUB_ENV
             echo "Sending notification to DEV"
           fi
+
       - name: Debug BASE_URL
         run: |
-            if [[ -z "$BASE_URL" ]]; then
-              echo "Error: BASE_URL is empty!"
-              exit 1
-            else
-              echo "BASE_URL is set."
-            fi
-          
-        
-          
+          echo "Checking BASE_URL..."
+          if [[ -z "$BASE_URL" ]]; then
+            echo "Error: BASE_URL is empty!"
+            exit 1
+          else
+            echo "BASE_URL is set to: $BASE_URL"
+          fi
