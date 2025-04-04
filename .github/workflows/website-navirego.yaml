@@ -37,6 +37,9 @@ jobs:
             echo "Sending notification to DEV"
           fi
 
+          env:
+            BASE_URL: ${{ env.BASE_URL }}
+
           curl -X 'PUT' "$BASE_URL/notification/regulatory/updated" \
           -H 'accept: */*' \
           -H "regulatorysecretskey: ${{ secrets.REGULATORY_SECRET_KEY }}" \
@@ -46,5 +49,3 @@ jobs:
             "regulatory_url": "${{ inputs.regulatory_url }}",
             "meta_data":"${{ inputs.meta_data }}"
           }'
-        env:
-          BASE_URL: ${{ env.BASE_URL }}
