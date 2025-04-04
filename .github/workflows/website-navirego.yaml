@@ -37,15 +37,6 @@ jobs:
             echo "Sending notification to DEV"
           fi
           
-          curl -X 'PUT' "$BASE_URL/notification/regulatory/updated" \
-          -H 'accept: */*' \
-          -H "regulatorysecretskey: ${{ secrets.REGULATORY_SECRET_KEY }}" \
-          -H 'Content-Type: application/json' \
-          -d '{
-            "sub_vertical_access": "${{ inputs.sub_vertical_access }}",
-            "regulatory_url": "${{ inputs.regulatory_url }}",
-            "meta_data":"${{ inputs.meta_data }}"
-          }' 
 
       - name: Debug BASE_URL
         run: |
