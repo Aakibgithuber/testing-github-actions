@@ -3,6 +3,15 @@ name: Send Notification
 on:
   workflow_dispatch:
     inputs:
+      sub_vertical_access:
+        description: 'Enter Sub Vertical Access'
+        required: true
+      regulatory_url:
+        description: 'Enter Regulatory URL'
+        required: true
+      meta_data:
+        description: 'Enter Meta-data'
+        required: true
       environment:
         description: 'Deployment Environment'
         required: true
@@ -15,18 +24,25 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
-      - name: Send direct notification (hardcoded test)
+      - name: Send notification to selected environment
         run: |
-          echo "Sending direct test notification to DEV"
+          if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
+            BASE_URL="${{ secrets.BASE_URL_PROD }}"
+            echo "Sending notification to PROD"
+          else
+            BASE_URL="${{ secrets.BASE_URL_DEV }}"
+            echo "Sending notification to DEV"
+          fi
 
-          curl --location --request PUT 'https://zqnz0u64i7.execute-api.ap-south-1.amazonaws.com/dev/notification/regulatory/updated' \
-          --header 'accept: */*' \
-          --header 'regulatorysecretkey: AVL5aghuNc9Cm0FidTejMEQMLNb9Clzh' \
-          --header 'Content-Type: application/json' \
-          --data '{
-            "sub_vertical_access": "maritime/regulatory/",
-            "regulatory_url": "https://dev.navirego.com/",
-            "meta_data": "maritime port regulatory"
-          }'
+          curl -X 'PUT' "$BASE_URL/notification/regulatory/updated" \
+          -H 'accept: */*' \
+          -H "regulatorysecretskey: ${{ secrets.REGULATORY_SECRET_KEY }}" \
+          -H 'Content-Type: application/json' \
+          -d "{
+            \"sub_vertical_access\": \"${{ github.event.inputs.sub_vertical_access }}\",
+            \"regulatory_url\": \"${{ github.event.inputs.regulatory_url }}\",
+            \"meta_data\": \"${{ github.event.inputs.meta_data }}\"
+          }"
