@@ -39,7 +39,7 @@ jobs:
 
           curl -X 'PUT' "$BASE_URL/notification/regulatory/updated" \
           -H 'accept: */*' \
-          -H "regulatorysecretskey: ${{ secrets.REGULATORY_SECRET_KEY }}" \
+          -H "regulatorysecretskey: AVL5aghuNc9Cm0FidTejMEQMLNb9CIzh" \
           -H 'Content-Type: application/json' \
           -d "{
             \"sub_vertical_access\": \"${{ github.event.inputs.sub_vertical_access }}\",
