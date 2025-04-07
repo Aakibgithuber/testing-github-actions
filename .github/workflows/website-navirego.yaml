@@ -3,15 +3,6 @@ name: Send Notification
 on:
   workflow_dispatch:
     inputs:
-      sub_vertical_access:
-        description: 'Enter Sub Vertical Access'
-        required: true
-      regulatory_url:
-        description: 'Enter Regulatory URL'
-        required: true
-      meta_data:
-        description: 'Enter Meta-data'
-        required: true
       environment:
         description: 'Deployment Environment'
         required: true
@@ -37,12 +28,12 @@ jobs:
             echo "Sending notification to DEV"
           fi
 
-          curl -X 'PUT' "$BASE_URL/notification/regulatory/updated" \
+          curl -X 'PUT' "https://zqnz0u64i7.execute-api.ap-south-1.amazonaws.com/dev/notification/regulatory/updated%27/notification/regulatory/updated" \
           -H 'accept: */*' \
-          -H "regulatorysecretskey: ${{ secrets.REGULATORY_SECRET_KEY }}" \
+          -H "regulatorysecretskey: AVL5aghuNc9Cm0FidTejMEQMLNb9CIzh" \
           -H 'Content-Type: application/json' \
           -d '{
-            "sub_vertical_access": "${{ inputs.sub_vertical_access }}",
-            "regulatory_url": "${{ inputs.regulatory_url }}",
-            "meta_data": "${{ inputs.meta_data }}"
+            "sub_vertical_access": "maritime/regulatory/",
+            "regulatory_url": "https://dev.navirego.com/%22",
+            "meta_data": "maritime port regulatory"
           }'
