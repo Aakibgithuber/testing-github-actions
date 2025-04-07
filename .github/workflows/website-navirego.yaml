@@ -21,18 +21,18 @@ jobs:
       - name: Send notification to selected environment
         run: |
           if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
-            BASE_URL=${{ secrets.BASE_URL_PROD }}
+            BASE_URL="${{ secrets.BASE_URL_PROD }}"
             echo "Sending notification to PROD"
           else
-            BASE_URL=${{ secrets.BASE_URL_DEV }}
+            BASE_URL="${{ secrets.BASE_URL_DEV }}"
             echo "Sending notification to DEV"
           fi
 
-          curl -X 'PUT' "https://zqnz0u64i7.execute-api.ap-south-1.amazonaws.com/dev/notification/regulatory/updated%27/notification/regulatory/updated" \
+          curl --location --request PUT "$BASE_URL/dev/notification/regulatory/updated" \
           --header 'accept: */*' \
-          --header "regulatorysecretskey: AVL5aghuNc9Cm0FidTejMEQMLNb9CIzh" \
+          --header 'regulatorysecretkey: ${{ secrets.REGULATORY_SECRET_KEY }}' \
           --header 'Content-Type: application/json' \
-          -data '{
+          --data '{
             "sub_vertical_access": "maritime/regulatory/",
             "regulatory_url": "https://dev.navirego.com/",
             "meta_data": "maritime port regulatory"
