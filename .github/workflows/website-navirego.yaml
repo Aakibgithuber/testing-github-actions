@@ -29,11 +29,11 @@ jobs:
           fi
 
           curl -X 'PUT' "https://zqnz0u64i7.execute-api.ap-south-1.amazonaws.com/dev/notification/regulatory/updated%27/notification/regulatory/updated" \
-          -H 'accept: */*' \
-          -H "regulatorysecretskey: AVL5aghuNc9Cm0FidTejMEQMLNb9CIzh" \
-          -H 'Content-Type: application/json' \
-          -d '{
+          --header 'accept: */*' \
+          --header "regulatorysecretskey: AVL5aghuNc9Cm0FidTejMEQMLNb9CIzh" \
+          --header 'Content-Type: application/json' \
+          -data '{
             "sub_vertical_access": "maritime/regulatory/",
-            "regulatory_url": "https://dev.navirego.com/%22",
+            "regulatory_url": "https://dev.navirego.com/",
             "meta_data": "maritime port regulatory"
           }'
