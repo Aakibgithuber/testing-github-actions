@@ -21,7 +21,7 @@ jobs:
         run: |
           echo "Sending direct test notification to DEV"
 
-          curl --location --request PUT 'https://zqnz0u64i7.execute-api.ap-south-1.amazonaws.com/dev/notification/regulatory/updated' \
+          curl PUT 'https://zqnz0u64i7.execute-api.ap-south-1.amazonaws.com/dev/notification/regulatory/updated' \
           --header 'accept: */*' \
           --header 'regulatorysecretkey: AVL5aghuNc9Cm0FidTejMEQMLNb9Clzh' \
           --header 'Content-Type: application/json' \
