@@ -42,7 +42,7 @@ jobs:
           --header 'regulatorysecretkey: ${{ secrets.REGULATORY_SECRET_KEY }}' \
           --header 'Content-Type: application/json' \
           --data '{
-            "sub_vertical_access": "maritime/regulatory/",
-            "regulatory_url": "https://dev.navirego.com/",
-            "meta_data": "maritime port regulatory"
+            "sub_vertical_access": "${{ inputs.sub_vertical_access }}",
+            "regulatory_url": "${{ inputs.regulatory_url }}",
+            "meta_data": "${{ inputs.meta_data }}"
           }'
