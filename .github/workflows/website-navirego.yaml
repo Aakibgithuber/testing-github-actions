@@ -15,22 +15,15 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
-      - name: Send notification to selected environment
+      - name: Send direct notification (hardcoded test)
         run: |
-          if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
-            BASE_URL="${{ secrets.BASE_URL_PROD }}"
-            echo "Sending notification to PROD"
-          else
-            BASE_URL="${{ secrets.BASE_URL_DEV }}"
-            echo "Sending notification to DEV"
-          fi
+          echo "Sending direct test notification to DEV"
 
-          curl --location --request PUT "$BASE_URL/dev/notification/regulatory/updated" \
+          curl --location --request PUT 'https://zqnz0u64i7.execute-api.ap-south-1.amazonaws.com/dev/notification/regulatory/updated' \
           --header 'accept: */*' \
-          --header 'regulatorysecretkey: AVL5aghuNc9Cm0FidTejMEQMLNb9CIzh' \
+          --header 'regulatorysecretkey: AVL5aghuNc9Cm0FidTejMEQMLNb9Clzh' \
           --header 'Content-Type: application/json' \
           --data '{
             "sub_vertical_access": "maritime/regulatory/",
