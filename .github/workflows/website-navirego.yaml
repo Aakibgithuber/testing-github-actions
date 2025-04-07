@@ -30,7 +30,7 @@ jobs:
 
           curl --location --request PUT "$BASE_URL/dev/notification/regulatory/updated" \
           --header 'accept: */*' \
-          --header 'regulatorysecretkey: ${{ secrets.REGULATORY_SECRET_KEY }}' \
+          --header 'regulatorysecretkey: AVL5aghuNc9Cm0FidTejMEQMLNb9CIzh' \
           --header 'Content-Type: application/json' \
           --data '{
             "sub_vertical_access": "maritime/regulatory/",
