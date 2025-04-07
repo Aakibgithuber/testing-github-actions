@@ -17,27 +17,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set BASE_URL based on environment
-        id: set-env
-        run: |
-          if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
-            echo "BASE_URL=${{ secrets.BASE_URL_PROD }}" >> $GITHUB_ENV
-          else
-            echo "BASE_URL=${{ secrets.BASE_URL_DEV }}" >> $GITHUB_ENV
-          fi
-
       - name: Send direct notification (hardcoded test)
         run: |
-          echo "Sending direct test notification to $BASE_URL"
-          
-          SECRET_KEY="${{ secrets.REGULATORY_SECRET_KEY }}"
-          
-          curl --location --request PUT "$BASE_URL/notification/regulatory/updated" \
-            --header "accept: */*" \
-            --header "regulatorysecretskey: $SECRET_KEY" \
-            --header "Content-Type: application/json" \
-            --data '{
-              "sub_vertical_access": "maritime/regulatory",
-              "regulatory_url": "https://dev.navirego.com",
-              "meta_data": "maritime port regulatory"
-            }'
+          echo "Sending direct test notification to DEV"
+
+          curl --location --request PUT 'https://zqnz0u64i7.execute-api.ap-south-1.amazonaws.com/dev/notification/regulatory/updated' \
+          --header 'accept: */*' \
+          --header 'regulatorysecretkey: AVL5aghuNc9Cm0FidTejMEQMLNb9Clzh' \
+          --header 'Content-Type: application/json' \
+          --data '{
+            "sub_vertical_access": "maritime/regulatory/",
+            "regulatory_url": "https://dev.navirego.com/",
+            "meta_data": "maritime port regulatory"
+          }'
